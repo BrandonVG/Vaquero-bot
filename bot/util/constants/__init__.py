@@ -15,7 +15,7 @@ __all__ = (
 log = logging.getLogger(__name__)
 
 class Client(NamedTuple):
-    name = "Vaquero bot"
+    name = "Agripino Guzmán Marttori"
     default_prefix = os.getenv("BOT_PREFIX", "v!")
     guild_id = 932264473408966656
     test_guild_id = 866235308416040971

@@ -12,7 +12,7 @@ cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 
 
-activity = nextcord.Game(name=f"Vaquereando")
+activity = nextcord.Game(name=f"Vaquereando en silencio")
 
 intents = nextcord.Intents.default()
 intents.members = True
