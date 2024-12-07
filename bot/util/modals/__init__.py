@@ -57,7 +57,7 @@ class RobRegister(nextcord.ui.Modal):
             value=(
                 f"```markdown\n"
                 f"Tipo de establecimiento: {self.type}\n"
-                f"Sobre qué hora: {spain_time}\n"
+                f"Sobre qué hora: {spain_time.strftime('%H:%M')}\n"
                 f"Qué has conseguido?: {self.obtained.value}\n"
                 f"Armamento utilizado: {self.used.value}\n"
                 f"Te ha pillado la policía?: {self.captured}"

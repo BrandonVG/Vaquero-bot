@@ -21,7 +21,7 @@ __all__ = (
     "COCHES_CHANNEL",
     "LABORATORIO_CHANNEL",
     "PAWNSHOP_CHANNEL",
-    "GUILD_ID",
+    "GUILD_ID"
 )
 
 log = logging.getLogger(__name__)
@@ -379,7 +379,7 @@ class TimeConverter:
         """
         Convert a time to UTC
         """
-        time_str = datetime.strptime(time_str.strip().lower(), "%I:%M %p") if "pm" in time_str or "am" in time_str else datetime.strptime(time_str.strip(), "%H:%M")
+        time_str = datetime.strptime(time_str.strip().upper(), "%I:%M %p") if "PM" in time_str.upper() or "AM" in time_str.upper() else datetime.strptime(time_str.strip(), "%H:%M")
         local_datetime = datetime.combine(datetime.now().date(), time_str.time())
         user_timezone = pytz.timezone(timezone)
         localized_time = user_timezone.localize(local_datetime)
