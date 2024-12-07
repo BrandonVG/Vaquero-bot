@@ -1,4 +1,4 @@
-import os, json, nextcord, logging, datetime, random, time
+import os, nextcord, logging, time
 from pathlib import Path
 from nextcord.ext import commands
 
@@ -18,7 +18,7 @@ intents = nextcord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-client = commands.Bot(commands_prefix=Client.prefix, case_insensitive=True, activity=activity, intents=intents)
+client = commands.AutoShardedBot(command_prefix=Client.default_prefix, case_insensitive=True, activity=activity, intents=intents)
 
 client.bot_version = Client.bot_version
 client.guild_id = Client.guild_id
@@ -93,5 +93,4 @@ if __name__ == "__main__":
     for file in os.listdir(cwd + "/cogs"):
         if file.endswith(".py") and not file.startswith("__pycache"):
             client.load_extension(f"cogs.{file[:-3]}")
-    
     client.run(Client.token)

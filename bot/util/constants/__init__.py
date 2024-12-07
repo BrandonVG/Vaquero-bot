@@ -1,15 +1,27 @@
 import logging
 import os
 import nextcord
+import pytz
+from datetime import datetime
+from typing import NamedTuple
 from dotenv.main import load_dotenv
 
-load_dotenv
+load_dotenv()
 
 __all__ = (
-  "Client",
-  "Colours",
-  "Emojis",
-  "Icons",
+    "Client",
+    "Colours",
+    "Emojis",
+    "Icons",
+    "TimeConverter",
+    "BADULAQUE_CHANNEL",
+    "TATUAJE_CHANNEL",
+    "PELUQUERIA_CHANNEL",
+    "CASAS_CHANNEL",
+    "COCHES_CHANNEL",
+    "LABORATORIO_CHANNEL",
+    "PAWNSHOP_CHANNEL",
+    "GUILD_ID",
 )
 
 log = logging.getLogger(__name__)
@@ -34,13 +46,22 @@ class Client(NamedTuple):
       read_message_history=True,
       add_reactions=True,
       use_external_emojis=True,
-      change_nicknames=True,
+    #   change_nicknames=True,
       create_public_threads=True,
       create_private_threads=True,
       view_audit_log=True,
     )
 
 DEBUG_MODE = Client.debug
+
+BADULAQUE_CHANNEL = os.getenv("BADULAQUESCHANNEL")
+TATUAJE_CHANNEL = os.getenv("TATUAJESCHANNEL")
+PELUQUERIA_CHANNEL = os.getenv("PELUQUERIACHANNEL")
+CASAS_CHANNEL = os.getenv("CASASCHANNEL")
+COCHES_CHANNEL = os.getenv("COCHESCHANNEL")
+LABORATORIO_CHANNEL = os.getenv("LABORATORIOCHANNEL")
+PAWNSHOP_CHANNEL = os.getenv("PAWNSHOPCHANNEL")
+GUILD_ID = os.getenv("GUILD_ID")
 
 class Colours:
     HTML5_COLOR_CODES = {"aliceblue": "0xf0f8ff",
@@ -351,3 +372,27 @@ class Icons:
         "https://images-ext-2.discordapp.net/external/zl4oDwcmxUILY7sD9ZWE2fU5R7n6QcxEmPYSE5eddbg/"
         "%3Fv%3D1/https/cdn.discordapp.com/emojis/654080405988966419.png?width=20&height=20"
     )
+
+class TimeConverter:
+    @staticmethod
+    def time_to_utc(time_str: str, timezone: str):
+        """
+        Convert a time to UTC
+        """
+        time_str = datetime.strptime(time_str.strip().lower(), "%I:%M %p") if "pm" in time_str or "am" in time_str else datetime.strptime(time_str.strip(), "%H:%M")
+        local_datetime = datetime.combine(datetime.now().date(), time_str.time())
+        user_timezone = pytz.timezone(timezone)
+        localized_time = user_timezone.localize(local_datetime)
+        utc_time = localized_time.astimezone(pytz.utc)
+
+        return utc_time
+    
+    @staticmethod
+    def utc_time_to_timezone(timezone: str, utc_time: datetime):
+        """
+        Convert a UTC time to a specified timezone
+        """
+        user_timezone = pytz.timezone(timezone)
+        localized_time = utc_time.astimezone(user_timezone)
+
+        return localized_time.time()
