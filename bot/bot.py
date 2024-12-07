@@ -1,16 +1,19 @@
 import os, nextcord, logging, time
 from pathlib import Path
 from nextcord.ext import commands
-
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from util.loaders import json
 from util.constants import Client
 from util.messages import DeleteMessage
+from util.scheduler import TimeScheduler
 
 #Config
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 
+scheduler = AsyncIOScheduler()
 
 activity = nextcord.Game(name=f"Vaquereando en silencio")
 
@@ -27,11 +30,16 @@ logging.basicConfig(level=logging.INFO)
 # Events
 
 @client.event
-async def on_read():
+async def on_ready():
     client.start_time = time.time()
 
     for cog in client.cogs:
         print(f"Loaded cog: {cog}")
+
+    time_scheduler = TimeScheduler(client)
+    scheduler.add_job(time_scheduler.send_weekly_message, CronTrigger(day_of_week="mon", hour=8, minute=0, timezone="Europe/Madrid"))
+    scheduler.start()
+    print("Tareas programadas iniciadas")
 
 
 @client.event
