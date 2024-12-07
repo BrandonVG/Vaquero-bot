@@ -28,7 +28,6 @@ client.guild_id = Client.guild_id
 logging.basicConfig(level=logging.INFO)
 
 # Events
-
 @client.event
 async def on_ready():
     client.start_time = time.time()
