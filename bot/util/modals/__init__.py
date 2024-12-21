@@ -40,7 +40,12 @@ class RobRegister(nextcord.ui.Modal):
     async def callback(self, interaction: Interaction):
         utc_time = TimeConverter.time_to_utc(self.time.value, self.timezone)
         spain_time = TimeConverter.utc_time_to_timezone("Europe/Madrid", utc_time)
+        spain_tz = pytz.timezone("Europe/Madrid")
+        monday = datetime.now(spain_tz) - timedelta(days=datetime.now(spain_tz).weekday())  # Lunes actual
+        sunday = monday + timedelta(days=6)
         channel_id = CHANNEL_TABLES.get(self.type)
+        channel = await interaction.guild.fetch_channel(channel_id)
+        message_count = await count_messages_in_date_range(channel, monday, sunday)
         embed = nextcord.Embed(
             title= "Robo realizado",
             description=(
@@ -49,6 +54,7 @@ class RobRegister(nextcord.ui.Modal):
                 f"**Qué has conseguido?:** {self.obtained.value}\n"
                 f"**Armamento utilizado:** {self.used.value}\n"
                 f"**Te ha pillado la policía?:** {self.captured}"
+                f"**Robos realizados esta semana:** {message_count}"
             ),
             color=nextcord.Color.dark_gold()
         )
@@ -68,8 +74,25 @@ class RobRegister(nextcord.ui.Modal):
         embed.set_footer(
             text=f"Robo realizado por {interaction.user.name}",
         )
-        channel = await interaction.guild.fetch_channel(channel_id)
         if channel is None:
             await interaction.response.send_message(embed=embed)
         else:
             await channel.send(embed=embed)
+
+
+async def count_messages_in_date_range(channel, start_date, end_date):
+    """
+    Cuenta los mensajes en un canal dentro de un rango de fechas.
+    
+    :param channel: El canal de Discord donde buscar mensajes.
+    :param start_date: Fecha de inicio (datetime con tzinfo).
+    :param end_date: Fecha de fin (datetime con tzinfo).
+    :return: El número de mensajes en el rango de fechas.
+    """
+    message_count = 0
+
+    # Iterar sobre los mensajes en el canal
+    async for message in channel.history(limit=None, after=start_date, before=end_date):
+        message_count += 1
+
+    return message_count
