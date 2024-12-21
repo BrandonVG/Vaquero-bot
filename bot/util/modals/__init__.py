@@ -5,13 +5,23 @@ import nextcord
 from util.constants import TimeConverter, CASAS_CHANNEL, COCHES_CHANNEL, BADULAQUE_CHANNEL, PELUQUERIA_CHANNEL, TATUAJE_CHANNEL, PAWNSHOP_CHANNEL
 
 CHANNEL_TABLES = {
-   "Peluquería": PELUQUERIA_CHANNEL,
+    "Peluquería": PELUQUERIA_CHANNEL,
     "Tienda de tatuajes": TATUAJE_CHANNEL,
     "Badulaque": BADULAQUE_CHANNEL,
     "Licoreria": BADULAQUE_CHANNEL,
     "Robo a casas": CASAS_CHANNEL,
     "Coche de importación": COCHES_CHANNEL,
     "Pawnshop": PAWNSHOP_CHANNEL
+}
+
+ROBCOUNT_TABLE = {
+    "Peluquería": "∞",
+    "Tienda de tatuajes": "∞",
+    "Badulaque": "20",
+    "Licoreria": "20",
+    "Robo a casas": "15",
+    "Coche de importación": "15",
+    "Pawnshop": "2"
 }
 class RobRegister(nextcord.ui.Modal):
     def __init__(self, type, time_zone, captured):
@@ -46,6 +56,7 @@ class RobRegister(nextcord.ui.Modal):
         monday = datetime.now(spain_tz) - timedelta(days=datetime.now(spain_tz).weekday())  # Lunes actual
         sunday = monday + timedelta(days=6)
         channel_id = CHANNEL_TABLES.get(self.type)
+        rob_limit = ROBCOUNT_TABLE.get(self.type)
         channel = await interaction.guild.fetch_channel(channel_id)
         message_count = await count_messages_in_date_range(channel, monday, sunday)
         embed = nextcord.Embed(
@@ -55,8 +66,8 @@ class RobRegister(nextcord.ui.Modal):
                 f"**Sobre qué hora:** {self.time.value}\n"
                 f"**Qué has conseguido?:** {self.obtained.value}\n"
                 f"**Armamento utilizado:** {self.used.value}\n"
-                f"**Te ha pillado la policía?:** {self.captured}"
-                f"**Robos realizados esta semana:** {message_count}"
+                f"**Te ha pillado la policía?:** {self.captured}\n"
+                f"**Robos realizados esta semana:** {message_count + 1}/{rob_limit}"
             ),
             color=nextcord.Color.dark_gold()
         )
