@@ -29,8 +29,8 @@ log = logging.getLogger(__name__)
 class Client(NamedTuple):
     name = "Agripino Guzmán Marttori"
     default_prefix = os.getenv("BOT_PREFIX", "v!")
-    guild_id = 932264473408966656
-    test_guild_id = 866235308416040971
+    guild_id = 1300528533529038931
+    test_guild_id = 1314779777017708644
     version = "0.0.1"
     bot_version = "0.0.1"
     token = os.getenv("DISCORD_TOKEN", "")

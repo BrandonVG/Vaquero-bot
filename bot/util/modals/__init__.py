@@ -67,7 +67,7 @@ class RobRegister(nextcord.ui.Modal):
                 f"**Qué has conseguido?:** {self.obtained.value}\n"
                 f"**Armamento utilizado:** {self.used.value}\n"
                 f"**Te ha pillado la policía?:** {self.captured}\n"
-                f"**Robos realizados esta semana:** {message_count + 1}/{rob_limit}"
+                f"**Robos realizados esta semana:** {message_count}/{rob_limit}"
             ),
             color=nextcord.Color.dark_gold()
         )
