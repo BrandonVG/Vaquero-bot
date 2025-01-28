@@ -28,6 +28,7 @@ class Slash(commands.Cog):
                 "America/Mexico_City",
                 "Europe/Madrid",
                 "America/Argentina/Buenos_Aires",
+                "America/Bogota",
             ],
         ),
         captured: str = SlashOption(
