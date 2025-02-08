@@ -1,4 +1,4 @@
-from cogs import Cogs, Slash
+from cogs import Cogs, Slash, StartMessage
 def unload(bot) -> None:
     """
     Reinstates the original help command.
@@ -19,3 +19,4 @@ def teardown(bot) -> None:
 def setup(bot):
     bot.add_cog(Cogs.CogSetup(bot))
     bot.add_cog(Slash.Slash(bot))
+    #bot.add_cog(StartMessage.StartMessage(bot))

@@ -2,7 +2,8 @@ from nextcord import Interaction
 import pytz
 from datetime import datetime, timedelta
 import nextcord
-from util.constants import TimeConverter, CASAS_CHANNEL, COCHES_CHANNEL, BADULAQUE_CHANNEL, PELUQUERIA_CHANNEL, TATUAJE_CHANNEL, PAWNSHOP_CHANNEL
+from util.constants import TimeConverter, CASAS_CHANNEL, COCHES_CHANNEL, BADULAQUE_CHANNEL, PELUQUERIA_CHANNEL, TATUAJE_CHANNEL, PAWNSHOP_CHANNEL, AMMU_CHANNEL
+from util.data import JsonLocalData
 
 CHANNEL_TABLES = {
     "Peluquería": PELUQUERIA_CHANNEL,
@@ -11,7 +12,8 @@ CHANNEL_TABLES = {
     "Licoreria": BADULAQUE_CHANNEL,
     "Robo a casas": CASAS_CHANNEL,
     "Coche de importación": COCHES_CHANNEL,
-    "Pawnshop": PAWNSHOP_CHANNEL
+    "Pawnshop": PAWNSHOP_CHANNEL,
+    "Ammu": AMMU_CHANNEL
 }
 
 ROBCOUNT_TABLE = {
@@ -21,11 +23,13 @@ ROBCOUNT_TABLE = {
     "Licoreria": "20",
     "Robo a casas": "15",
     "Coche de importación": "15",
-    "Pawnshop": "2"
+    "Pawnshop": "2",
+    "Ammu": "2"
 }
 class RobRegister(nextcord.ui.Modal):
     def __init__(self, type, time_zone, captured):
         super().__init__(timeout=None,title="Registrar robo")
+        self.dataAccess = JsonLocalData()
 
         self.type = type
         self.timezone = time_zone
@@ -52,13 +56,13 @@ class RobRegister(nextcord.ui.Modal):
     async def callback(self, interaction: Interaction):
         utc_time = TimeConverter.time_to_utc(self.time.value, self.timezone)
         spain_time = TimeConverter.utc_time_to_timezone("Europe/Madrid", utc_time)
-        spain_tz = pytz.timezone("Europe/Madrid")
-        monday = datetime.now(spain_tz) - timedelta(days=datetime.now(spain_tz).weekday())  # Lunes actual
-        sunday = monday + timedelta(days=6)
+        count = self.dataAccess.get_data_rob("Badulaque" if self.type == "Licoreria" else self.type)
+        count = count + 1
+        self.dataAccess.set_data_rob("Badulaque" if self.type == "Licoreria" else self.type, count)
         channel_id = CHANNEL_TABLES.get(self.type)
         rob_limit = ROBCOUNT_TABLE.get(self.type)
         channel = await interaction.guild.fetch_channel(channel_id)
-        message_count = await count_messages_in_date_range(channel, monday, sunday)
+        
         embed = nextcord.Embed(
             title= "Robo realizado",
             description=(
@@ -67,7 +71,7 @@ class RobRegister(nextcord.ui.Modal):
                 f"**Qué has conseguido?:** {self.obtained.value}\n"
                 f"**Armamento utilizado:** {self.used.value}\n"
                 f"**Te ha pillado la policía?:** {self.captured}\n"
-                f"**Robos realizados esta semana:** {message_count}/{rob_limit}"
+                f"**Robos realizados esta semana:** {count}/{rob_limit}"
             ),
             color=nextcord.Color.dark_gold()
         )

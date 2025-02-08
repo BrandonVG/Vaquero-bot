@@ -1,5 +1,5 @@
-from nextcord.ext import commands
 import nextcord
+from nextcord.ext import commands
 
 class CogSetup(commands.Cog, name="Extension Setup", description="Cargar, descargar y recargar cogs."):
       def __init__(self, bot):

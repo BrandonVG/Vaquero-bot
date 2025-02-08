@@ -19,6 +19,7 @@ class Slash(commands.Cog):
             "Robo a casas",
             "Coche de importación",
             "Pawnshop",
+            "Ammu"
         ],
         ),timezone: str = SlashOption(
             name="timezone",
@@ -42,3 +43,4 @@ class Slash(commands.Cog):
     ):
         modal = RobRegister(establecimiento, timezone, captured)
         await interaction.response.send_modal(modal)
+    
